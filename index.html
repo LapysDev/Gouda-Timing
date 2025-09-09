@@ -360,6 +360,7 @@
       var itemBounds            = {width: 50, height: 50};
       var items                 = {held: [], timer: {microwave: null, oven: null, sandwich: null, vend: null}, use: {microwave: false, oven: false, vend: false, vending: 0}};
       var music                 = document.getElementById("music") || new Audio; // --> document.createElement("audio")
+      var musicONCE             = false;
       var pointer               = {x: 0, y: 0};
       var ratio                 = 3000 / 1250;
       var screenPointer         = {x: 0, y: 0};
@@ -664,7 +665,8 @@
 
       function start() {
         resize();
-        audio(music, null), audio(music, "assets/tracks/man.mp3").onerror = function() { this.onerror = null; this.src = "https://lapysdev.github.io/Gouda-Timing/assets/tracks/menu.mp3" };
+        audio(music, null);
+        (audio(music, "assets/tracks/menu.mp3") || {onerror: null}).onerror = function() { this.onerror = null; this.src = "https://lapysdev.github.io/Gouda-Timing/assets/tracks/menu.mp3" };
         menu(main);
 
         customerUpcomingTimer.elapse();
@@ -691,6 +693,7 @@
           var zoom            = resolution();
           var tutorialChanged = tutorial !== tutorialPrior;
           var subzoom         = canvas.width / station.background.naturalWidth;
+          var started         = false;
           var stationWidth    = canvas.width;
           var stationHeight   = station.background.naturalHeight * subzoom;
           var stationLeft     = (canvas.width  - stationWidth)  >> 1;
@@ -700,8 +703,10 @@
           var computedStyle   = getComputedStyle(canvas) || style;
 
           // ...
-          if (start !== void null)
-            start = void start();
+          if (start !== void null) {
+            start   = void start();
+            started = true
+          }
 
           stationPointer.x -= stationLeft;
           stationPointer.y -= stationTop;
@@ -784,7 +789,10 @@
                   return
                 }
 
-                audio(music, "assets/tracks/game.mp3").onerror = function() { this.onerror = null; this.src = "https://lapysdev.github.io/Gouda-Timing/assets/tracks/game.mp3" };
+                if (!musicONCE) {
+                  (audio(music, "assets/tracks/game.mp3") || {onerror: null}).onerror = function() { this.onerror = null; this.src = "https://lapysdev.github.io/Gouda-Timing/assets/tracks/game.mp3" };
+                  musicONCE = true
+                }
 
                 if (within(stationBounds.bread, stationPointer)) {
                   context.drawImage(station.select.bread, stationLeft, stationTop, stationWidth, stationHeight);
@@ -800,7 +808,6 @@
                   context.drawImage(station.select.microwave, stationLeft, stationTop, stationWidth, stationHeight);
                   if (interacted) {
                     if (!(items.held.includes(ITEM_SANDWICH_DONE) || items.held.includes(ITEM_SANDWICH_OVERDONE))) {
-                      console.log(items.use.microwave);
                       if (!items.use.microwave) prep(ITEM_SANDWICH_UNDONE);
                       else pick(Math.abs(items.timer.microwave.getProgressUnclamped() - 1.0) < 0.5 ? ITEM_SANDWICH_DONE : items.timer.microwave.isElapsed() ? ITEM_SANDWICH_OVERDONE : ITEM_SANDWICH_UNDONE)
                     } else audio(sounds, "assets/sfx/wrong.mp3")
