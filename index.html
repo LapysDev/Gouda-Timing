@@ -15,12 +15,12 @@
       @font-face /* CITE (Lapys) -> Christian Schwartz, CSTM Fonts, Ilya Ruderman @ `https://type.today/en/Graphik`, `https://type.today/en/journal/graphikcondensed` */ {
         font-family: Graphik;
         font-weight: 400;
-        src        : local("Graphik Comp Regular Trial"), url("assets/fonts/graphik.otf") format("opentype")
+        src        : local("Graphik Comp Regular Trial"), url(assets/fonts/graphik.otf) format("opentype"), url(https://lapysdev.github.io/Gouda-Timing/assets/fonts/graphik.otf) format("opentype")
       }
 
       @font-face {
         font-family: "Virgo 01";
-        src        : local("Virgo 01"), url("assets/fonts/virgo-01.ttf") format("truetype")
+        src        : local("Virgo 01"), url(assets/fonts/virgo-01.ttf) format("truetype"), url(https://lapysdev.github.io/Gouda-Timing/assets/fonts/virgo-01.ttf) format("truetype")
       }
 
       /* <audio> */
@@ -48,9 +48,9 @@
       /* <canvas> */
       canvas {
         background-color      : #000000;
-        background-image      : url(assets/menu.jpg);
+        background-image      : url(assets/menu.jpg), url(https://lapysdev.github.io/Gouda-Timing/assets/menu.jpg);
         box-sizing            : border-box;
-        cursor                : url(assets/cursors/knife.png) 0 0, auto;
+        cursor                : url(assets/cursors/knife.png) 0 0, url(https://lapysdev.github.io/Gouda-Timing/assets/cursors/knife.png) 0 0, auto;
         image-rendering       : -moz-crisp-edges;
         image-rendering       : -webkit-crisp-edges;
         image-rendering       : crisp-edges;
@@ -100,7 +100,7 @@
           #menus .menu button {
             background-color   : #FEC128;
             background-color   : transparent;
-            background-image   : url(assets/button.png);
+            background-image   : url(assets/button.png), url(https://lapysdev.github.io/Gouda-Timing/assets/button.png);
             background-position: center;
             background-repeat  : no-repeat;
             background-size    : 100% 100%;
@@ -163,7 +163,7 @@
         }
           /* Home */
           #menus #hud #home {
-            background-image: url(assets/button-rounded.png);
+            background-image: url(assets/button-rounded.png), url(https://lapysdev.github.io/Gouda-Timing/assets/button-rounded.png);
             border-radius   : 50%;
             height          : 65px;
             float           : left;
@@ -238,7 +238,7 @@
         /* Ready */
         #menus #ready {
           background            : linear-gradient(#CB9401, #FEC128);
-          background            : url(assets/wallpaper.jpg);
+          background            : url(assets/wallpaper.jpg), url(https://lapysdev.github.io/Gouda-Timing/assets/wallpaper.jpg);
           background-color      : #CB9401;
           background-repeat     : no-repeat;
           background-size       : cover;
@@ -301,7 +301,7 @@
       </table>
 
       <div class=menu id=main>
-        <img alt="Gouda Timing" id=logo src="assets/logo.png"/>
+        <img alt="Gouda Timing" id=logo onerror="this.src = 'https://lapysdev.github.io/Gouda-Timing/assets/logo.png'" src="assets/logo.png"/>
         <button id=play onclick=menu(hud)>      Play </button>
         <button id=quit onclick=window.close()> Quit </button>
       </div>
@@ -317,7 +317,7 @@
       </div>
     </div>
     <canvas id=canvas> </canvas>
-    <audio autoplay id=music muted=muted preload=auto src=assets/tracks/menu.mp3> </audio>
+    <audio autoplay id=music muted=muted onerror="this.src = 'https://lapysdev.github.io/Gouda-Timing/assets/tracks/menu.mp3'" preload=auto src=assets/tracks/menu.mp3> </audio>
 
     <!-- Document Script -->
     <script language=javascript type=text/javascript>
@@ -720,7 +720,13 @@
 
           if (pause.hidden) {
             context.fillStyle        = "rgba(0, 0, 0, 0.5)"; // ->> Black
-            style.backgroundPosition = ((+computedStyle.backgroundPositionX.replace(/%$/, "") + MENU_BACKGROUND_TRANSLATION_X_SPEED) % 100.0) + "% " + ((+computedStyle.backgroundPositionY.replace(/%$/, "") + MENU_BACKGROUND_TRANSLATION_Y_SPEED) % 100.0) + '%';
+            style.backgroundPosition = computedStyle.backgroundPosition.split(',').map(function(position) {
+              var values = position.trim().split(/\s+/);
+              return values.length === 2 ? (
+                (((+values[0].replace(/%$/, "") || 0.0) + MENU_BACKGROUND_TRANSLATION_X_SPEED) % 100.0) + "% " +
+                (((+values[1].replace(/%$/, "") || 0.0) + MENU_BACKGROUND_TRANSLATION_Y_SPEED) % 100.0) + '%'
+              ) : "0% 0%"
+            }).join(", ");
 
             for (var index = customersQueued.length, left = canvas.width * 0.20, boundsLeft = left / subzoom; index--; ) {
               var customer      = customers[customersQueued[index]];
@@ -877,7 +883,7 @@
 
                     return scale(bounds, subzoom)
                   })({width: itemIcon.iceCream.naturalWidth, height: itemIcon.iceCream.naturalHeight});
-                  var left = stationLeft + (stationBounds.vendingBowl.left * subzoom) + (bounds.width  * parseInt(index % column) * 0.9) + (stationBounds.vendingBowl.width * 0.1 * 0.5);
+                  var left = stationLeft + (stationBounds.vendingBowl.left * subzoom) + (bounds.width  * parseInt(index % column) * 0.9) + (stationBounds.vendingBowl.width * 0.1);
                   var top  = stationTop  + (stationBounds.vendingBowl.top  * subzoom) - (bounds.height * parseInt(index / column) * 0.5) - (bounds.height >>> 1);
 
                   // ...
@@ -943,7 +949,7 @@
                 context.fillRect(left + stationLeft, stationTop + (stationHeight * 0.050) + (size * 1.100), canvas.width * 0.065, canvas.height * 0.030);
 
                 context.fillStyle = customerTimerProgress > 0.6 ? "#00AF00" : customerTimerProgress > 0.3 ? "#FFFF00" : "#CF0000";
-                context.fillRect(left + stationLeft, stationTop + (stationHeight * 0.050) + (size * 1.100), canvas.width * 0.065 - customerTimerProgress, canvas.height * 0.030);
+                context.fillRect(left + stationLeft, stationTop + (stationHeight * 0.050) + (size * 1.100), canvas.width * 0.065 * customerTimerProgress, canvas.height * 0.030);
 
                 boundsLeft += customerBound.width * 0.35;
                 left       += customerBound.width * 0.35
@@ -1368,53 +1374,88 @@
       }();
 
       /* ... */
-      canvas.onclick                    = function(event) { pointer.x = event.x; pointer.y = event.y; screenPointer.x = event.screenX; screenPointer.y = event.screenY; interacted = true };
-      canvas.onmousemove                = function(event) { pointer.x = event.x; pointer.y = event.y; screenPointer.x = event.screenX; screenPointer.y = event.screenY };
-      canvas.oncontextmenu              = function() { if (0 !== items.held.length) { drop(items.held[0]) } return false };
-      customerUpcomingTimer             = new Timer(CUSTOMER_UPCOMING_DURATION);
-      document.onreadystatechange       = function() { if (this.readyState === "complete") resize() };
-      itemIcon.bread               .src = "assets/item-bread"                   + ".png";
-      itemIcon.cheeseBall          .src = "assets/item-cheese-ball"             + ".png";
-      itemIcon.cheeseCrackers      .src = "assets/item-cheese-crackers"         + ".png";
-      itemIcon.iceCream            .src = "assets/item-ice-cream-ball"          + ".png";
-      itemIcon.macAndCheeseDone    .src = "assets/item-mac-and-cheese-done"     + ".png";
-      itemIcon.macAndCheeseOverdone.src = "assets/item-mac-and-cheese-overdone" + ".png";
-      itemIcon.macAndCheeseUndone  .src = "assets/item-mac-and-cheese-undone"   + ".png";
-      itemIcon.sandwichDone        .src = "assets/item-sandwich-done"           + ".png";
-      itemIcon.sandwichOverdone    .src = "assets/item-sandwich-overdone"       + ".png";
-      itemIcon.sandwichUndone      .src = "assets/item-sandwich-undone"         + ".png";
-      itemIcon.slice               .src = "assets/item-cheese"                  + ".png";
-      items.timer.microwave             = new Timer(4.0);
-      items.timer.oven                  = new Timer(5.0);
-      items.timer.sandwich              = new Timer(3.0);
-      items.timer.vend                  = new Timer(1.0);
-      ready.onclick                     = function() { this.hidden = true };
-      station.background           .src = "assets/background"             + ".png";
-      station.foreground           .src = "assets/foreground"             + ".png";
-      station.select.bread         .src = "assets/select-bread"           + ".png";
-      station.select.cabinet       .src = "assets/select-cabinet"         + ".png";
-      station.select.microwave     .src = "assets/select-microwave"       + ".png";
-      station.select.oven          .src = "assets/select-oven"            + ".png";
-      station.select.slices        .src = "assets/select-slices"          + ".png";
-      station.select.snacks        .src = "assets/select-snacks"          + ".png";
-      station.select.vendingMachine.src = "assets/select-vending_machine" + ".png";
-      station.show.macAndCheese    .src = "assets/show-mac_and_cheese"    + ".png";
-      station.show.microwave       .src = "assets/show-microwave"         + ".png";
-      station.show.sandwich        .src = "assets/show-sandwich"          + ".png";
-      station.show.snacks          .src = "assets/show-snacks"            + ".png";
-      station.show.vendingMachine  .src = "assets/show-vending_machine"   + ".png";
-      station.unuse.bread          .src = "assets/unuse-bread"            + ".png";
-      station.unuse.slice          .src = "assets/unuse-slice"            + ".png";
-      station.unuse.snacks         .src = "assets/unuse-snacks"           + ".png";
-      station.use.oven             .src = "assets/use-oven"               + ".png";
-      station.use.microwave        .src = "assets/use-microwave"          + ".png";
-      station.use.vendingBowl      .src = "assets/use-vending_bowl"       + ".png";
-      tutorialTimer                     = new Timer(3.0);
-      window.onresize                   = function() { resize() };
+      canvas.onclick                        = function(event) { pointer.x = event.x; pointer.y = event.y; screenPointer.x = event.screenX; screenPointer.y = event.screenY; interacted = true };
+      canvas.onmousemove                    = function(event) { pointer.x = event.x; pointer.y = event.y; screenPointer.x = event.screenX; screenPointer.y = event.screenY };
+      canvas.oncontextmenu                  = function() { if (0 !== items.held.length) { drop(items.held[0]) } return false };
+      customerUpcomingTimer                 = new Timer(CUSTOMER_UPCOMING_DURATION);
+      document.onreadystatechange           = function() { if (this.readyState === "complete") resize() };
+      itemIcon.bread               .onerror = function() { this.src = "https://lapysdev.github.io/Gouda-Timing/assets/item-bread.png" };
+      itemIcon.bread               .src     = "assets/item-bread.png";
+      itemIcon.cheeseBall          .onerror = function() { this.src = "https://lapysdev.github.io/Gouda-Timing/assets/item-cheese-ball.png" };
+      itemIcon.cheeseBall          .src     = "assets/item-cheese-ball.png";
+      itemIcon.cheeseCrackers      .onerror = function() { this.src = "https://lapysdev.github.io/Gouda-Timing/assets/item-cheese-crackers.png" };
+      itemIcon.cheeseCrackers      .src     = "assets/item-cheese-crackers.png";
+      itemIcon.iceCream            .onerror = function() { this.src = "https://lapysdev.github.io/Gouda-Timing/assets/item-ice-cream-ball.png" };
+      itemIcon.iceCream            .src     = "assets/item-ice-cream-ball.png";
+      itemIcon.macAndCheeseDone    .onerror = function() { this.src = "https://lapysdev.github.io/Gouda-Timing/assets/item-mac-and-cheese-done.png" };
+      itemIcon.macAndCheeseDone    .src     = "assets/item-mac-and-cheese-done.png";
+      itemIcon.macAndCheeseOverdone.onerror = function() { this.src = "https://lapysdev.github.io/Gouda-Timing/assets/item-mac-and-cheese-overdone.png" };
+      itemIcon.macAndCheeseOverdone.src     = "assets/item-mac-and-cheese-overdone.png";
+      itemIcon.macAndCheeseUndone  .onerror = function() { this.src = "https://lapysdev.github.io/Gouda-Timing/assets/item-mac-and-cheese-undone.png" };
+      itemIcon.macAndCheeseUndone  .src     = "assets/item-mac-and-cheese-undone.png";
+      itemIcon.sandwichDone        .onerror = function() { this.src = "https://lapysdev.github.io/Gouda-Timing/assets/item-sandwich-done.png" };
+      itemIcon.sandwichDone        .src     = "assets/item-sandwich-done.png";
+      itemIcon.sandwichOverdone    .onerror = function() { this.src = "https://lapysdev.github.io/Gouda-Timing/assets/item-sandwich-overdone.png" };
+      itemIcon.sandwichOverdone    .src     = "assets/item-sandwich-overdone.png";
+      itemIcon.sandwichUndone      .onerror = function() { this.src = "https://lapysdev.github.io/Gouda-Timing/assets/item-sandwich-undone.png" };
+      itemIcon.sandwichUndone      .src     = "assets/item-sandwich-undone.png";
+      itemIcon.slice               .onerror = function() { this.src = "https://lapysdev.github.io/Gouda-Timing/assets/item-cheese.png" };
+      itemIcon.slice               .src     = "assets/item-cheese.png";
+      items.timer.microwave                 = new Timer(4.0);
+      items.timer.oven                      = new Timer(5.0);
+      items.timer.sandwich                  = new Timer(3.0);
+      items.timer.vend                      = new Timer(1.0);
+      ready.onclick                         = function() { this.hidden = true };
+      station.background           .onerror = function() { this.src = "https://lapysdev.github.io/Gouda-Timing/assets/background.png" };
+      station.background           .src     = "assets/background.png";
+      station.foreground           .onerror = function() { this.src = "https://lapysdev.github.io/Gouda-Timing/assets/foreground.png" };
+      station.foreground           .src     = "assets/foreground.png";
+      station.select.bread         .onerror = function() { this.src = "https://lapysdev.github.io/Gouda-Timing/assets/select-bread.png" };
+      station.select.bread         .src     = "assets/select-bread.png";
+      station.select.cabinet       .onerror = function() { this.src = "https://lapysdev.github.io/Gouda-Timing/assets/select-cabinet.png" };
+      station.select.cabinet       .src     = "assets/select-cabinet.png";
+      station.select.microwave     .onerror = function() { this.src = "https://lapysdev.github.io/Gouda-Timing/assets/select-microwave.png" };
+      station.select.microwave     .src     = "assets/select-microwave.png";
+      station.select.oven          .onerror = function() { this.src = "https://lapysdev.github.io/Gouda-Timing/assets/select-oven.png" };
+      station.select.oven          .src     = "assets/select-oven.png";
+      station.select.slices        .onerror = function() { this.src = "https://lapysdev.github.io/Gouda-Timing/assets/select-slices.png" };
+      station.select.slices        .src     = "assets/select-slices.png";
+      station.select.snacks        .onerror = function() { this.src = "https://lapysdev.github.io/Gouda-Timing/assets/select-snacks.png" };
+      station.select.snacks        .src     = "assets/select-snacks.png";
+      station.select.vendingMachine.onerror = function() { this.src = "https://lapysdev.github.io/Gouda-Timing/assets/select-vending_machine.png" };
+      station.select.vendingMachine.src     = "assets/select-vending_machine.png";
+      station.show.macAndCheese    .onerror = function() { this.src = "https://lapysdev.github.io/Gouda-Timing/assets/show-mac_and_cheese.png" };
+      station.show.macAndCheese    .src     = "assets/show-mac_and_cheese.png";
+      station.show.microwave       .onerror = function() { this.src = "https://lapysdev.github.io/Gouda-Timing/assets/show-microwave.png" };
+      station.show.microwave       .src     = "assets/show-microwave.png";
+      station.show.sandwich        .onerror = function() { this.src = "https://lapysdev.github.io/Gouda-Timing/assets/show-sandwich.png" };
+      station.show.sandwich        .src     = "assets/show-sandwich.png";
+      station.show.snacks          .onerror = function() { this.src = "https://lapysdev.github.io/Gouda-Timing/assets/show-snacks.png" };
+      station.show.snacks          .src     = "assets/show-snacks.png";
+      station.show.vendingMachine  .onerror = function() { this.src = "https://lapysdev.github.io/Gouda-Timing/assets/show-vending_machine.png" };
+      station.show.vendingMachine  .src     = "assets/show-vending_machine.png";
+      station.unuse.bread          .onerror = function() { this.src = "https://lapysdev.github.io/Gouda-Timing/assets/unuse-bread.png" };
+      station.unuse.bread          .src     = "assets/unuse-bread.png";
+      station.unuse.slice          .onerror = function() { this.src = "https://lapysdev.github.io/Gouda-Timing/assets/unuse-slice.png" };
+      station.unuse.slice          .src     = "assets/unuse-slice.png";
+      station.unuse.snacks         .onerror = function() { this.src = "https://lapysdev.github.io/Gouda-Timing/assets/unuse-snacks.png" };
+      station.unuse.snacks         .src     = "assets/unuse-snacks.png";
+      station.use.oven             .onerror = function() { this.src = "https://lapysdev.github.io/Gouda-Timing/assets/use-oven.png" };
+      station.use.oven             .src     = "assets/use-oven.png";
+      station.use.microwave        .onerror = function() { this.src = "https://lapysdev.github.io/Gouda-Timing/assets/use-microwave.png" };
+      station.use.microwave        .src     = "assets/use-microwave.png";
+      station.use.vendingBowl      .onerror = function() { this.src = "https://lapysdev.github.io/Gouda-Timing/assets/use-vending_bowl.png" };
+      station.use.vendingBowl      .src     = "assets/use-vending_bowl.png";
+      tutorialTimer                         = new Timer(3.0);
+      window.onresize                       = function() { resize() };
 
       document.body.appendChild(music);
       menu(ready);
-      void function set(index) { var customer = new Image; customer.onload = function() { customers.push(customer); set(index) }; customer.src = "assets/customer-" + ++index + ".png" }(0);
+      void function set(index) {
+        var customer = new Image;
+
+        // ...
+        customer.onload = function() { customers.push(customer); set(index) }; customer.src = "assets/customer-" + ++index + ".png" }(0);
     </script>
   </body>
 </html>
